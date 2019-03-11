@@ -3,7 +3,11 @@
 #include<stdlib.h>
 #include<math.h>
 
+<<<<<<< HEAD
 #define NODE_NUMBER 10000
+=======
+#define NODE_NUMBER 5000
+>>>>>>> 13a0edb585e8f107992672ab68095bb81c3b6df6
 #define F_GAMMA 2
 #define K_MIN 1
 
@@ -134,7 +138,7 @@ void create_edge(int *deg_sum,int rem[NODE_NUMBER],int *E,int *M){//Mは枝数
 	while(*deg_sum>0 && repeat<repeat_max){
     k_rem_max=0;
     
-    //残った点の中から次数最大の点を選出
+    //残った点の中から次数最大の点を選出,これが始点となる
     for(i=0;i<NODE_NUMBER;i++){
       if(rem[i]>k_rem_max){
         k_rem_max=rem[i];
@@ -143,18 +147,22 @@ void create_edge(int *deg_sum,int rem[NODE_NUMBER],int *E,int *M){//Mは枝数
     }
   	
   	//k_rem_max分の次数を引いて、残りの次数を選ぶ
+<<<<<<< HEAD
     ri=(int)Uniform()*((*deg_sum)-k_rem_max);
+=======
+    ri=(int)(Uniform()*((*arg_sum)-k_rem_max));
+>>>>>>> 13a0edb585e8f107992672ab68095bb81c3b6df6
     //printf("ri=%d\n",ri);
     
     //初期化
     v_e=-1;
     sum=0;
   	
-  	//???
+  	//終点を決める
     while(ri>=sum){
       v_e++;
       if(v_e!=v_s)
-        sum+=rem[v_e];
+        sum+=rem[v_e];  //終点と始点が同じじゃなければ,sumに次数を足していく
     }
   	
   	//printf("(v_s,v_f)=(%d,%d)\n",v_s,v_e);
