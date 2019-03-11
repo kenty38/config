@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<math.h>
 
-#define NODE_NUMBER 10
+#define NODE_NUMBER 10000
 #define F_GAMMA 2
 #define K_MIN 1
 
@@ -12,7 +12,7 @@ double Uniform(void);	//0~1の乱数
 void decide_probabirity(double p[NODE_NUMBER]);
 void decide_degree(double p[NODE_NUMBER],int degr[NODE_NUMBER]);
 void rem_init_and_degree_sum(int *sum,int rem[NODE_NUMBER],int degr[NODE_NUMBER]);
-void create_edge(int *arg_sum,int rem[NODE_NUMBER],int *E,int *M);
+void create_edge(int *deg_sum,int rem[NODE_NUMBER],int *E,int *M);
 
 //--------------<Main>---------------------------------------------
 int main(void){
@@ -25,13 +25,13 @@ int main(void){
   
   int *E;
   int edges=0;
+  
+  //シード値入力
+		srand((unsigned)time(NULL));
 
 	while(edges==0){	
 		
 		k_sum=0;
-		
-		//シード値入力
-		srand((unsigned)time(NULL));
 		
 		//確率変数決定
 		decide_probabirity(P);
@@ -44,7 +44,7 @@ int main(void){
 
 		//Eの動的割り当
   	E=malloc(sizeof(int)*k_sum);
-  
+  	printf("k_sum=%d\n",k_sum);
   	//枝の作成と枝の数の算出
   	create_edge(&k_sum,k_rem,E,&edges);
   	
@@ -52,7 +52,7 @@ int main(void){
   	//break;
   }
   
-  printf("edge=%d\n",edges);
+  //printf("edge=%d\n",edges);
     
   return 1;
 
@@ -118,20 +118,20 @@ void rem_init_and_degree_sum(int *sum,int rem[NODE_NUMBER],int degr[NODE_NUMBER]
 }
 
 //枝の作成と枝の数の算出
-void create_edge(int *arg_sum,int rem[NODE_NUMBER],int *E,int *M){//Mは枝数
+void create_edge(int *deg_sum,int rem[NODE_NUMBER],int *E,int *M){//Mは枝数
 	int i;
 	int repeat=0,repeat_max;
 	int k_rem_max;										//残りの次数の中での最大の次数
 	int v_s,v_e;
 	int ri=0;
 	int sum,mult;
-	int confirm_k_sum=*arg_sum;
+	int confirm_k_sum=*deg_sum;
 	
 	//反復回数決定
-	repeat_max=100*(*arg_sum);
+	repeat_max=100*(*deg_sum);
 	
 	//枝の割り当て,次数和が0になるまで繰り返す
-	while(*arg_sum>0 && repeat<repeat_max){
+	while(*deg_sum>0 && repeat<repeat_max){
     k_rem_max=0;
     
     //残った点の中から次数最大の点を選出
@@ -143,7 +143,7 @@ void create_edge(int *arg_sum,int rem[NODE_NUMBER],int *E,int *M){//Mは枝数
     }
   	
   	//k_rem_max分の次数を引いて、残りの次数を選ぶ
-    ri=(int)Uniform()*((*arg_sum)-k_rem_max);
+    ri=(int)Uniform()*((*deg_sum)-k_rem_max);
     //printf("ri=%d\n",ri);
     
     //初期化
@@ -163,7 +163,7 @@ void create_edge(int *arg_sum,int rem[NODE_NUMBER],int *E,int *M){//Mは枝数
     mult=0;
     i=0;
   	
-  	//枝の組み合わせが既存か確認
+  	//枝の組み合わせが既存か確認(高速化可能)
     while(i<(*M) && mult==0){
       if((E[2*i]==v_s && E[2*i+1]==v_e) || (E[2*i]==v_e && E[2*i+1]==v_s))
       	mult=1;
@@ -173,7 +173,7 @@ void create_edge(int *arg_sum,int rem[NODE_NUMBER],int *E,int *M){//Mは枝数
   	//枝の組み合わせがなければ、次数和から2引いて各点の次数を1ずつ減らす
     if(mult==0){
       E[2*(*M)]=v_s; E[2*(*M)+1]=v_e;
-      (*arg_sum)-=2;
+      (*deg_sum)-=2;
       (*M)++;
       rem[v_s]--; rem[v_e]--;
       //printf("rem[v_s],rem[v_e]=%d,%d\n",rem[v_s],rem[v_e]);
