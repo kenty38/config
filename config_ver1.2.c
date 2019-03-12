@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<math.h>
 
-#define NODE_NUMBER 10
+#define NODE_NUMBER 9000
 #define F_GAMMA 2
 #define K_MIN 1
 
@@ -34,7 +34,7 @@ int main(void){
   //シード値入力
   srand((unsigned)time(NULL));
   
-	//while(edges==0){	
+	while(edges==0){	
 		
 		k_sum=0;
 		
@@ -52,9 +52,9 @@ int main(void){
   	create_edge(&k_sum,node,&edges);
   	
   	//break;
-  //}
+  }
   
-  //printf("edge=%d\n",edges);
+  printf("edge=%d\n",edges);
     
   return 1;
 
@@ -97,8 +97,6 @@ void decide_degree(struct Node n[NODE_NUMBER],double p[NODE_NUMBER]){
     n[i].degree=K_MIN;
     while(rd>p[n[i].degree])
       n[i].degree++;
-
-		n[i].ad_list=malloc(sizeof(int)*n[i].degree);
     
   //printf("degree[%d]=%d\n",i,n[i].degree);
   }
@@ -114,10 +112,15 @@ void rem_init_and_degree_sum(int *sum,struct Node n[NODE_NUMBER]){
   }
   
   if(*sum%2==1){
+    n[NODE_NUMBER-1].degree++;
     n[NODE_NUMBER-1].rem++;
     (*sum)++;
     //puts("最後の頂点の次数を1増やして、次数和を偶数にした。");
   }
+  
+  //次数和の調整後、隣接リスト形成
+  for(i=0;i<NODE_NUMBER;i++)
+	  n[i].ad_list=malloc(sizeof(int)*(n[i].degree));
   
   //printf("次数和=%d\n",*sum);
 }
@@ -194,7 +197,7 @@ void create_edge(int *deg_sum,struct Node n[NODE_NUMBER],int *M){//Mは枝数
     *M=0;
   }
   
-  if(*M>0){
+/*  if(*M>0){
     //隣接リスト確認  
     for(i=0;i<NODE_NUMBER;i++){
       printf("%d:",i);
@@ -204,10 +207,11 @@ void create_edge(int *deg_sum,struct Node n[NODE_NUMBER],int *M){//Mは枝数
       puts("");
     }
   }
-  
+*/  
   //メモリ解放
   for(i=0;i<NODE_NUMBER;i++)
-    free(n[i].ad_list);
+      free(n[i].ad_list);
+      
   
   //printf("edge=%d\n",*M);
 }
